@@ -143,6 +143,8 @@ def Command9_Cmd():
 
 
 def Command10_Cmd():
+    Picture1 = tk.Canvas(top, bg='#FFFFFF')
+    Picture1.place(relx=0.256, rely=0.141, relwidth=0.706, relheight=0.721)
     # 画布的大小和分别率
     fig = Figure(dpi=100)
     axs1 = fig.add_subplot(121)
