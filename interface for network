@@ -1,0 +1,249 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+
+import tkinter as tk
+from tkinter.font import Font
+from tkinter import ttk
+from tkinter.messagebox import *
+from txt_list import *
+from gen_list_matrix import *
+from basic_network_graph import *
+from degree import *
+from s_path import *
+from clustering import *
+from coreness_2 import *
+from i_atta import *
+from r_atta import *
+from robustness_graph import *
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+import networkx as nx
+import numpy as np
+
+top = tk.Tk()
+top.title('Form1')
+top.geometry('1032x567')
+style = ttk.Style()
+
+
+def Command1_Cmd():
+    (node_all, edge, A) = txt_list()
+    var2.set(len(node_all))
+
+
+def Command2_Cmd():
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    node_degree = degree(adjlist, node_all)
+    node_deg2 = every_node(adjlist)
+    ave_Degree = ave_degree(node_degree, node_all)
+    var3.set(ave_Degree)
+
+
+def Command3_Cmd():
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    ave_c = round(clu_cof(node_all, adjlist), 2)
+    var4.set(ave_c)
+
+
+def Command4_Cmd():
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    cn_1 = coreness(node_all, adjlist, A, adjmatrix)
+    max_cn = max(cn_1)
+    var5.set(max_cn)
+
+
+def Command5_Cmd():
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    ave_pathlenth = Floyd(len(node_all), adjmatrix)
+    var6.set(round(ave_pathlenth, 2))
+
+
+def Command6_Cmd():
+    Picture1 = tk.Canvas(top, bg='#FFFFFF')
+    Picture1.place(relx=0.256, rely=0.141, relwidth=0.706, relheight=0.721)
+    # 画布的大小和分别率
+    fig = Figure(dpi=100)
+    axs = fig.add_subplot(111)
+    # y 轴不可见
+    axs.axes.get_yaxis().set_visible(False)
+    # x 轴不可见
+    axs.axes.get_xaxis().set_visible(False)
+    canvas = FigureCanvasTkAgg(fig, master=Picture1)  # A tk.DrawingArea.
+    canvas.draw()
+    # 显示画布
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    (node_all, edge, A) = txt_list()
+    G = gen_graph(node_all, edge,axs)
+    nx.draw_networkx(G, ax=axs, pos=nx.random_layout(G), node_color='r', node_size=10, node_shape='o', edge_color='b',
+                     width=0.3, style='solid', with_labels=True, font_size=8)
+
+
+def Command7_Cmd():
+    Picture1 = tk.Canvas(top, bg='#FFFFFF')
+    Picture1.place(relx=0.256, rely=0.141, relwidth=0.706, relheight=0.721)
+    fig = Figure(dpi=100)
+    axs = fig.add_subplot(111)
+    canvas = FigureCanvasTkAgg(fig, master=Picture1)  # A tk.DrawingArea.
+    canvas.draw()
+    # 显示画布
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    node_degree = degree(adjlist, node_all)
+    node_deg2 = every_node(adjlist)
+    dis1 = deg_dis(node_deg2, axs)
+
+
+def Command8_Cmd():
+    Picture1 = tk.Canvas(top, bg='#FFFFFF')
+    Picture1.place(relx=0.256, rely=0.141, relwidth=0.706, relheight=0.721)
+    fig = Figure(dpi=100)
+    axs = fig.add_subplot(111)
+    canvas = FigureCanvasTkAgg(fig, master=Picture1)  # A tk.DrawingArea.
+    canvas.draw()
+    # 显示画布
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    node_degree = degree(adjlist, node_all)
+    node_deg2 = every_node(adjlist)
+    dis2 = deg_sole(node_deg2, node_all, axs)
+
+
+def Command9_Cmd():
+    Picture1 = tk.Canvas(top, bg='#FFFFFF')
+    Picture1.place(relx=0.256, rely=0.141, relwidth=0.706, relheight=0.721)
+    # 画布的大小和分别率
+    fig = Figure(dpi=100)
+    axs1 = fig.add_subplot(121)
+    axs2 = fig.add_subplot(122)
+    # y 轴不可见
+    axs1.axes.get_yaxis().set_visible(False)
+    # x 轴不可见
+    axs1.axes.get_xaxis().set_visible(False)
+    # y 轴不可见
+    axs2.axes.get_yaxis().set_visible(False)
+    # x 轴不可见
+    axs2.axes.get_xaxis().set_visible(False)
+    canvas = FigureCanvasTkAgg(fig, master=Picture1)  # A tk.DrawingArea.
+    canvas.draw()
+    # 显示画布
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    cn_1 = coreness(node_all, adjlist, A, adjmatrix)
+    max_cn = max(cn_1)
+    cn_graph(node_all, edge, max_cn, cn_1, axs1, axs2)
+
+
+def Command10_Cmd():
+    # 画布的大小和分别率
+    fig = Figure(dpi=100)
+    axs1 = fig.add_subplot(121)
+    axs2 = fig.add_subplot(122)
+    # y 轴不可见
+    axs1.axes.get_yaxis().set_visible(False)
+    # x 轴不可见
+    axs1.axes.get_xaxis().set_visible(False)
+    # y 轴不可见
+    axs2.axes.get_yaxis().set_visible(False)
+    # x 轴不可见
+    axs2.axes.get_xaxis().set_visible(False)
+    canvas = FigureCanvasTkAgg(fig, master=Picture1)  # A tk.DrawingArea.
+    canvas.draw()
+    # 显示画布
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    adjmatrix_1 = adjmatrix
+    adjlist_1 = adjlist
+    (i_adjmatrix_1, i_node_deg1) = trans1(adjmatrix_1, adjlist_1)
+    (i_atta_short, i_size_sub, i_node_num, i_d, i_s_num) = i_atta(i_adjmatrix_1, i_node_deg1, node_all)
+    (node_all, edge, A) = txt_list()
+    (adjlist, adjmatrix) = gen_list_matrix(node_all, A)
+    adjmatrix_2 = adjmatrix
+    adjlist_2 = adjlist
+    (r_adjmatrix_2, r_node_deg2) = trans2(adjmatrix_2, adjlist_2)
+    (r_atta_short, r_size_sub, r_node_num, r_d, r_s_num) = r_atta(r_adjmatrix_2, r_node_deg2, node_all)
+    rb_graph(i_s_num, i_size_sub, r_size_sub, i_atta_short, r_atta_short,axs1,axs2)
+
+var2 = tk.StringVar()
+var3 = tk.StringVar()
+var4 = tk.StringVar()
+var5 = tk.StringVar()
+var6 = tk.StringVar()
+
+style.configure('Label1.TLabel', anchor='w', font=('Romantic', 24))
+Label1 = ttk.Label(top, text='Network Modeling', style='Label1.TLabel')
+Label1.place(relx=0.403, rely=0.014, relwidth=0.241, relheight=0.072)
+
+style.configure('Command1.TButton', font=('@Microsoft JhengHei UI', 10))
+Command1 = ttk.Button(top, text='number of nodes', command=Command1_Cmd, style='Command1.TButton')
+Command1.place(relx=0.047, rely=0.141, relwidth=0.156, relheight=0.044)
+
+style.configure('Command2.TButton', font=('@Microsoft JhengHei UI', 10))
+Command2 = ttk.Button(top, text='average of degree', command=Command2_Cmd, style='Command2.TButton')
+Command2.place(relx=0.047, rely=0.296, relwidth=0.156, relheight=0.044)
+
+style.configure('Command3.TButton', font=('@Microsoft JhengHei UI', 10))
+Command3 = ttk.Button(top, text='clustering coefficient', command=Command3_Cmd, style='Command3.TButton')
+Command3.place(relx=0.047, rely=0.451, relwidth=0.156, relheight=0.044)
+
+style.configure('Command4.TButton', font=('@Microsoft JhengHei UI', 10))
+Command4 = ttk.Button(top, text='coreness of graph', command=Command4_Cmd, style='Command4.TButton')
+Command4.place(relx=0.047, rely=0.607, relwidth=0.156, relheight=0.044)
+
+style.configure('Command5.TButton', font=('@Microsoft JhengHei UI', 10))
+Command5 = ttk.Button(top, text='average shortest path', command=Command5_Cmd, style='Command5.TButton')
+Command5.place(relx=0.047, rely=0.762, relwidth=0.156, relheight=0.044)
+
+style.configure('Command6.TButton', font=('@Microsoft JhengHei UI', 10))
+Command6 = ttk.Button(top, text='basic graph', command=lambda: Command6_Cmd(), style='Command6.TButton')
+Command6.place(relx=0.31, rely=0.889, relwidth=0.102, relheight=0.044)
+
+style.configure('Command7.TButton', font=('@Microsoft JhengHei UI', 10))
+Command7 = ttk.Button(top, text='degree_1', command=lambda: Command7_Cmd(), style='Command7.TButton')
+Command7.place(relx=0.442, rely=0.889, relwidth=0.102, relheight=0.044)
+
+style.configure('Command8.TButton', font=('@Microsoft JhengHei UI', 10))
+Command8 = ttk.Button(top, text='degree_2', command=lambda: Command8_Cmd(), style='Command8.TButton')
+Command8.place(relx=0.574, rely=0.889, relwidth=0.102, relheight=0.044)
+
+style.configure('Command9.TButton', font=('@Microsoft JhengHei UI', 10))
+Command9 = ttk.Button(top, text='coreness', command=lambda: Command9_Cmd(), style='Command9.TButton')
+Command9.place(relx=0.705, rely=0.889, relwidth=0.102, relheight=0.044)
+
+style.configure('Command10.TButton', font=('@Microsoft JhengHei UI', 10))
+Command10 = ttk.Button(top, text='attack', command=lambda: Command10_Cmd(), style='Command10.TButton')
+Command10.place(relx=0.837, rely=0.889, relwidth=0.102, relheight=0.044)
+
+style.configure('Label2.TLabel', anchor='center', background='#FFFFFF', font=('宋体', 14))
+Label2 = ttk.Label(top, textvariable=var2, style='Label2.TLabel')
+Label2.place(relx=0.047, rely=0.212, relwidth=0.156, relheight=0.044)
+
+style.configure('Label3.TLabel', anchor='center', background='#FFFFFF', font=('宋体', 14))
+Label3 = ttk.Label(top, textvariable=var3, style='Label3.TLabel')
+Label3.place(relx=0.047, rely=0.367, relwidth=0.156, relheight=0.044)
+
+style.configure('Label4.TLabel', anchor='center', background='#FFFFFF', font=('宋体', 14))
+Label4 = ttk.Label(top, textvariable=var4, style='Label4.TLabel')
+Label4.place(relx=0.047, rely=0.522, relwidth=0.156, relheight=0.044)
+
+style.configure('Label5.TLabel', anchor='center', background='#FFFFFF', font=('宋体', 14))
+Label5 = ttk.Label(top, textvariable=var5, style='Label5.TLabel')
+Label5.place(relx=0.047, rely=0.677, relwidth=0.156, relheight=0.044)
+
+style.configure('Label6.TLabel', anchor='center', background='#FFFFFF', font=('宋体', 14))
+Label6 = ttk.Label(top, textvariable=var6, style='Label6.TLabel')
+Label6.place(relx=0.047, rely=0.832, relwidth=0.156, relheight=0.044)
+
+Picture1 = tk.Canvas(top, bg='#FFFFFF')
+Picture1.place(relx=0.256, rely=0.141, relwidth=0.706, relheight=0.721)
+
+tk.mainloop()
